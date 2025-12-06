@@ -343,7 +343,7 @@ const form = document.getElementById("applicationForm");
 const resultWrap = document.getElementById("resultWrap");
 const resultBox = document.getElementById("result");
 
-// Build JSON function
+// Build JSON with correct Discord/Pipedream fields
 function buildJSON() {
     return {
         ign: ign.value,
@@ -351,15 +351,20 @@ function buildJSON() {
         discord: discord.value,
         facebook: fb.value,
         messenger: messenger.value,
-        timezone: timezone.value,
-        playtimes: playtimes.value,
+
+        // Fix: Pipedream expects "activity", not "playtimes"
+        activity: playtimes.value,
+
         why: why.value,
         experience: experience.value,
+
         rulesAgree: rulesAgree.value,
         banned: banned.value,
         banExplain: banExplain.value,
         extra: extra.value,
-        submittedAt: new Date().toLocaleString()
+
+        // Fix: Pipedream template uses "timestamp"
+        timestamp: new Date().toLocaleString()
     };
 }
 
@@ -410,4 +415,4 @@ form.onsubmit = async (e) => {
 </script>
 
 </body>
-  </html>
+</html>
