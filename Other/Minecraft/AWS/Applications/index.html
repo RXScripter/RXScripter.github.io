@@ -1,1 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>AWS SMP Application</title>
 
+<style>
+    :root {
+        --bg: #f2f2f2;
+        --card-bg: white;
+        --text: #000;
+        --subtext: rgba(0,0,0,0.75);
+
+        /* cherry blossom colors */
+        --cherry1: #ff9ecb;
+        --cherry2: #ffd6e8;
+        --cherry3: #ffeaf4;
+    }
+
+    body.dark {
+        --bg: #1a1a1a;
+        --card-bg: #242424;
+        --text: #fff;
+        --subtext: rgba(255,255,255,0.7);
+    }
+
+    body {
+        background: var(--bg);
+        margin: 0;
+        font-family: Arial, sans-serif;
+        transition: background 0.3s ease;
+        overflow-x: hidden;
+    }
+
+    .container {
+        max-width: 880px;
+        margin: auto;
+        padding: 18px;
+        box-sizing: border-box;
+        width: 100%;
+    }
+
+    /* Fix text overflow */
+    * {
+        word-wrap: break-word;
+        overflow-wrap: break-word;
+    }
+
+    h1 {
+        text-align: center;
+        font-size: 40px;
+        margin-bottom: 10px;
+        background: linear-gradient(90deg, var(--cherry1), var(--cherry3));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        color: transparent;
+    }
+
+    .fade { animation: fadeIn 0.5s ease forwards; }
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(6px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+
+    .desc-box, .rules-box, .links-section {
+        background: var(--card-bg);
+        padding: 20px;
+        border-radius: 12px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.15);
+        margin-bottom: 22px;
+        color: var(--text);
+        line-height: 1.55;
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    .rules-title {
+        font-weight: bold;
+        font-size: 24px;
+        margin-bottom: 12px;
+        background: linear-gradient(90deg, var(--cherry1), var(--cherry2));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        color: transparent;
+    }
+
+    /* Form Grid Fix */
+    .app-form {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 14px;
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    .full { grid-column: 1 / -1; }
+
+    label {
+        font-size: 14px;
+        margin-bottom: 5px;
+        display: block;
+        color: var(--subtext);
+    }
+
+    input, textarea, select {
+        width: 100%;
+        padding: 11px 14px;
+        border-radius: 8px;
+        border: 1px solid #d6d6d6;
+        background: var(--bg);
+        color: var(--text);
+        font-size: 14px;
+        box-sizing: border-box;
+    }
+
+    textarea { min-height: 110px; resize: vertical; }
+
+    .actions {
+        grid-column: 1 / -1;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        justify-content: flex-end;
+    }
+
+    .btn {
+        padding: 10px 14px;
+        border-radius: 8px;
+        border: none;
+        cursor: pointer;
+        background: linear-gradient(90deg, var(--cherry1), var(--cherry3));
+        color: #fff;
+        font-weight: bold;
+        white-space: nowrap;
+    }
+
+    .btn.ghost {
+        background: var(--card-bg);
+        border: 1px solid #ccc;
+        color: var(--text);
+    }
+
+    .note {
+        font-size: 13px;
+        color: var(--subtext);
+        grid-column: 1 / -1;
+        line-height: 1.4;
+    }
+
+    .result {
+        background: rgba(0, 0, 0, 0.08);
+        padding: 12px;
+        border-radius: 10px;
+        color: var(--text);
+        font-size: 13px;
+        white-space: pre-wrap;
+        max-height: 250px;
+        overflow-y: auto;
+    }
+
+    .floating-panel {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        z-index: 999;
+    }
+
+    .float-btn {
+        width: 48px;
+        height: 48px;
+        border-radius: 12px;
+        background: var(--card-bg);
+        color: var(--text);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 22px;
+        border: 1px solid #ccc;
+        cursor: pointer;
+        transition: 0.2s;
+    }
+
+    .float-btn:hover { transform: scale(0.9); }
+
+    /* MOBILE FIXES */
+    @media (max-width: 720px) {
+        .app-form {
+            grid-template-columns: 1fr;
+        }
+
+        .actions {
+            justify-content: center;
+        }
+    }
+</style>
+</head>
+
+<body>
+
+<link rel="icon" type="image/png" href="/icon.png">
+
+<!-- Floating Panel (Back Button Removed) -->
+<div class="floating-panel">
+    <div class="float-btn" id="themeBtn">☀️</div>
+</div>
+
+<div class="container fade">
+    <h1>AWS SMP</h1>
+
+    <div class="desc-box fade">
+        Welcome to the AWS SMP application page!  
+        This SMP is peaceful, friendly, and cherry-blossom themed.  
+        If you want a chill place with no griefing, no chaos, and respectful players — you're in the right place.
+    </div>
+
+    <div class="rules-box fade">
+        <div class="rules-title">📜 Server Rules (AWS SMP)</div>
+
+        <p><strong>1. No cheating or exploiting</strong><br>No hacks, clients, dupes, X-ray, bug abuse, or anything unfair.</p>
+        <p><strong>2. Be respectful</strong><br>No toxicity, slurs, bullying, or harassment.</p>
+        <p><strong>3. No spawn killing / griefing</strong><br>No trapping spawn, repeated killing, or griefing bases.</p>
+        <p><strong>4. No stealing from active players</strong><br>Ask before taking items. Unclaimed abandoned stuff is fine.</p>
+        <p><strong>5. PvP only if BOTH sides agree</strong><br>No random killing.</p>
+        <p><strong>6. No excessive lag machines</strong><br>Redstone is okay—just don’t crash the server.</p>
+        <p><strong>7. Keep builds appropriate</strong><br>No NSFW, offensive, or hateful structures.</p>
+        <p><strong>8. Respect staff decisions</strong><br>If staff asks you to stop something, stop.</p>
+        <p><strong>9. Have fun & keep the SMP chill</strong><br>Be friendly and enjoy the world.</p>
+    </div>
+
+    <div class="links-section fade">
+        <form id="applicationForm" class="app-form" autocomplete="off">
+
+            <div>
+                <label>Minecraft IGN</label>
+                <input id="ign" type="text" placeholder="Your username" required>
+            </div>
+
+            <div>
+                <label>Age</label>
+                <input id="age" type="text" placeholder="Ex: 15" required>
+            </div>
+
+            <div>
+                <label>Discord</label>
+                <input id="discord" type="text" placeholder="Optional">
+            </div>
+
+            <div>
+                <label>Facebook username</label>
+                <input id="fb" type="text" placeholder="Your FB name" required>
+            </div>
+
+            <div>
+                <label>Messenger link / username</label>
+                <input id="messenger" type="text" placeholder="m.me/yourname" required>
+            </div>
+
+            <div>
+                <label>Your timezone / country</label>
+                <input id="timezone" type="text" placeholder="Ex: Philippines (GMT+8)" required>
+            </div>
+
+            <div class="full">
+                <label>Typical playtimes</label>
+                <input id="playtimes" type="text" placeholder="Ex: Weeknights 7pm–11pm" required>
+            </div>
+
+            <div class="full">
+                <label>Why do you want to join?</label>
+                <textarea id="why" placeholder="Short explanation" required></textarea>
+            </div>
+
+            <div class="full">
+                <label>Experience / playstyle</label>
+                <textarea id="experience" placeholder="Building, redstone, etc." required></textarea>
+            </div>
+
+            <div>
+                <label>Have you read & agree to the rules?</label>
+                <select id="rulesAgree" required>
+                    <option value="">Select</option>
+                    <option value="Yes—I will follow the rules.">Yes—I will follow the rules.</option>
+                    <option value="No">No</option>
+                </select>
+            </div>
+
+            <div>
+                <label>Ever been banned?</label>
+                <select id="banned" required>
+                    <option value="">Select</option>
+                    <option value="No">No</option>
+                    <option value="Yes—explain below">Yes—explain below</option>
+                </select>
+            </div>
+
+            <div class="full">
+                <label>If yes, explain</label>
+                <input id="banExplain" type="text" placeholder="Optional">
+            </div>
+
+            <div class="full">
+                <label>Anything else we should know?</label>
+                <textarea id="extra" placeholder="Build plans, friends on server, etc."></textarea>
+            </div>
+
+            <div class="actions full">
+                <button type="button" id="previewBtn" class="btn ghost">Preview</button>
+                <button type="button" id="copyBtn" class="btn ghost">Copy JSON</button>
+                <button type="button" id="downloadBtn" class="btn ghost">Download JSON</button>
+                <button type="submit" class="btn">Submit Application</button>
+            </div>
+
+            <div class="note full">
+                Your information will be reviewed manually.  
+                If accepted, you'll receive a message via Messenger or Discord.
+            </div>
+
+            <div class="full" id="resultWrap" style="display:none;">
+                <p><strong>Submission Result:</strong></p>
+                <div id="result" class="result"></div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+// Replace webhook with Pipedream URL
+const PIPE_URL = "https://eoy3kr9sky4qa5v.m.pipedream.net";
+
+// Theme toggle
+document.getElementById("themeBtn").onclick = () => {
+    document.body.classList.toggle("dark");
+    document.getElementById("themeBtn").textContent =
+        document.body.classList.contains("dark") ? "🌙" : "☀️";
+};
+
+// Main form
+const form = document.getElementById("applicationForm");
+const resultWrap = document.getElementById("resultWrap");
+const resultBox = document.getElementById("result");
+
+// Build JSON function
+function buildJSON() {
+    return {
+        ign: ign.value,
+        age: age.value,
+        discord: discord.value,
+        facebook: fb.value,
+        messenger: messenger.value,
+        timezone: timezone.value,
+        playtimes: playtimes.value,
+        why: why.value,
+        experience: experience.value,
+        rulesAgree: rulesAgree.value,
+        banned: banned.value,
+        banExplain: banExplain.value,
+        extra: extra.value,
+        submittedAt: new Date().toLocaleString()
+    };
+}
+
+// Preview JSON
+document.getElementById("previewBtn").onclick = () => {
+    const json = buildJSON();
+    resultBox.textContent = JSON.stringify(json, null, 4);
+    resultWrap.style.display = "block";
+};
+
+// Copy JSON
+document.getElementById("copyBtn").onclick = () => {
+    const json = JSON.stringify(buildJSON(), null, 4);
+    navigator.clipboard.writeText(json);
+    alert("Copied!");
+};
+
+// Download JSON
+document.getElementById("downloadBtn").onclick = () => {
+    const json = JSON.stringify(buildJSON(), null, 4);
+    const blob = new Blob([json], { type: "application/json" });
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = "AWS_SMP_Application.json";
+    link.click();
+};
+
+// Submit to Pipedream
+form.onsubmit = async (e) => {
+    e.preventDefault();
+
+    const payload = buildJSON();
+
+    try {
+        const res = await fetch(PIPE_URL, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload)
+        });
+
+        resultBox.textContent = "Submitted successfully!";
+        resultWrap.style.display = "block";
+    } catch (err) {
+        resultBox.textContent = "Error sending request: " + err;
+        resultWrap.style.display = "block";
+    }
+};
+</script>
+
+</body>
+  </html>
